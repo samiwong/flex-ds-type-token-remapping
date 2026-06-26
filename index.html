@@ -83,8 +83,9 @@
   .fam b{font-size:13.5px} .fam .sizes{font-family:var(--mono);font-size:11px;color:var(--ink2);margin-top:3px}
   .pill{display:inline-block;font-size:11px;font-family:var(--mono);background:var(--panel2);border-radius:6px;padding:1px 7px;margin:2px 3px 0 0}
   .src{color:var(--ink3);font-size:12px;margin-top:30px;border-top:1px solid var(--line);padding-top:14px;line-height:1.6}
-  /* side-by-side aligned table — scrolls with the PAGE (no inner container) */
-  table.side{min-width:1500px;margin:10px 0 28px;font-size:12px;border:1px solid var(--line)}
+  /* side-by-side aligned table — scrolls inside its own container */
+  .sidewrap{overflow-x:auto;margin:10px 0 28px;border:1px solid var(--line);border-radius:10px}
+  table.side{min-width:1500px;margin:0;font-size:12px}
   table.side th,table.side td{padding:7px 11px;white-space:nowrap;border-bottom:1px solid var(--line);background:#fff}
   table.side thead th{position:static;text-transform:none;letter-spacing:0}
   table.side th.grp{text-align:center;color:var(--ink);font-weight:700;font-size:12px;background:var(--panel)}
@@ -369,8 +370,8 @@ function renderSide(){
    <p class="note"><b>Dark Matter</b> = the redesign (moving to) · <b>UV</b> = current Figma library · <b>genoa</b> = current code.
    <b>Size</b> shows <span class="mono">font-size / line-height</span>; <b>Letter-spacing</b> = spacing between characters (% of font size).
    Deprecated rows at the bottom; <span class="dash">—</span> = not present in that source.
-   Scroll the page sideways → <b>Status</b> and <b>Token</b> stay pinned.</p>
-   <table class="side"><thead>
+   Scroll the table sideways → <b>Status</b> and <b>Token</b> stay pinned.</p>
+   <div class="sidewrap"><table class="side"><thead>
      <tr><th rowspan="2" class="pin-a">Status</th><th rowspan="2" class="pin-b">Token</th>
          <th class="grp gsep" colspan="4">Dark Matter (new)</th>
          <th class="grp gsep" colspan="4">UV (original)</th>
@@ -384,7 +385,7 @@ function renderSide(){
     const D=sidePieces(byName(DM,dm)), U=sidePieces(byName(UV,uv)), G=sidePieces(byName(GENOA,gn));
     h+=`<tr class="${isDep(flags)?'dep':''}"><td class="pin-a">${flagsHTML(flags)}</td><td class="pin-b"><span class="tok">${label}</span></td>${grp(D)}${grp(U)}${grp(G)}</tr>`;
   }
-  h+=`</tbody></table>`;
+  h+=`</tbody></table></div>`;
   $("#tab-side").innerHTML=h;
 }
 
@@ -399,10 +400,12 @@ function renderRemap(){
     h+=`<tr><td><span class="tok">${k}</span></td><td ${cls}><b>${a}</b></td><td>${d}</td></tr>`;
   }
   h+=`</tbody></table>
-   <h3>The label-sm split</h3>
+   <h3>The label-sm / caption restructure</h3>
    <p class="note">Today <code>label-sm</code> (ABC Diatype Regular 12/16) is overloaded — disclaimer/fine-print
-   <i>and</i> small labels. We rename it to <code>caption-sm</code> (the disclaimer token) and add a brand-new
-   <code>label-sm</code> for tiny badge/pill labels (exact size/weight TBD).</p>
+   <i>and</i> small labels. We rotate the caption naming: <code>label-sm</code> (12px disclaimer) → <code>caption</code>;
+   current <code>caption</code> (10px) → <code>caption-sm</code>; <code>caption-hyperlink</code> → <code>caption-sm-hyperlink</code>.
+   <b>No new <code>label-sm</code></b> — <code>label-sm-bold</code> (kept) covers small/badge labels;
+   <code>label-sm-bold</code> and <code>label-sm-hyperlink</code> are left as-is.</p>
    <div class="callout"><b>Title-case rule (eng subissue under DS-225):</b> titles, buttons <b>and labels</b> are
    title-cased when they're ≤ 4 words. Implement a title-case helper with exceptions — minor words (a, the, of, to…),
    acronyms, proper nouns, and locales — left untouched.</div>`;
@@ -444,8 +447,8 @@ function renderGT(){
    <table><thead><tr><th>style</th><th>was</th><th>becomes</th></tr></thead><tbody>
    <tr><td><span class="tok">hero-lg</span></td><td class="dash">CooperMdBT-Regular</td><td><span style="font-family:var(--display);font-weight:600">GT Standard L Smbd</span></td></tr>
    <tr><td><span class="tok">hero-md</span></td><td class="dash">CooperMdBT-Regular</td><td><span style="font-family:var(--display);font-weight:600">GT Standard L Smbd</span></td></tr>
-   <tr><td><span class="tok">page-md</span> (was page-title)</td><td class="dash">ABC Diatype Bold</td><td><span style="font-family:var(--display);font-weight:600">GT Standard L Smbd</span></td></tr>
-   <tr><td><span class="tok">section-sm</span> (was section-title)</td><td class="dash">ABC Diatype Bold</td><td><span style="font-family:var(--display);font-weight:600">GT Standard L Smbd</span></td></tr>
+   <tr><td><span class="tok">page-title</span></td><td class="dash">ABC Diatype Bold</td><td><span style="font-family:var(--display);font-weight:600">GT Standard L Smbd</span></td></tr>
+   <tr><td><span class="tok">section-title</span></td><td class="dash">ABC Diatype Bold</td><td><span style="font-family:var(--display);font-weight:600">GT Standard L Smbd</span></td></tr>
    <tr><td><span class="tok">header-sm</span></td><td class="dash">ABC Diatype Medium</td><td><span style="font-family:var(--display);font-weight:600">GT Standard L Smbd · TITLE</span></td></tr>
    <tr><td><span class="tok">button</span></td><td class="dash">ABC Diatype Bold</td><td><span style="font-family:var(--display);font-weight:700">GT Standard L Bd · TITLE</span></td></tr>
    <tr><td><span class="tok">button-sm</span></td><td class="dash">ABC Diatype Medium</td><td><span style="font-family:var(--display);font-weight:600">GT Standard L Smbd · TITLE</span></td></tr>
