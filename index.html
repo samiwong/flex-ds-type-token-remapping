@@ -282,19 +282,20 @@ const REMAP = [
 ];
 // Phase 2 family summary: [family, font, sizes[]]
 const TAX = [
+  ["hero","GT Standard",["hero-lg","hero-md"]],
   ["title","GT Standard",["title-lg","title-md","title-sm"]],
-  ["heading","ABC Diatype",["heading-lg","heading-md","heading-sm"]],
   ["body","ABC Diatype",["body-lg","body-md","body-sm","body-xs"]],
   ["label","ABC Diatype",["label-lg","label-md","label-sm"]]
-  // caption family removed — captions deprecated into body (overline / number.* P2 home open)
+  // LOCKED 2026-06-30 (DS-240): heading RETIRED → folds into title (GT Standard);
+  // caption removed → body; overline + number.* P2 home open (DS-238); numbers = mono feature
 ];
 // Phase 2 before→after: [today, phase2, family, note]
 const MAP2 = [
-  ["hero.lg","title-lg","title","GT Standard display"],
-  ["hero.md","title-md","title",""],
-  ["page.title","title-sm","title","keeping name in Phase 1"],
-  ["section.title","heading-lg","heading","keeping name in Phase 1"],
-  ["header.sm","heading-md","heading",""],
+  ["hero.lg","hero-lg","hero","GT Standard display"],
+  ["hero.md","hero-md","hero",""],
+  ["page.title","title-lg","title","keeping name in Phase 1"],
+  ["section.title","title-md","title","heading retired → title (DS-240)"],
+  ["header.sm","title-sm","title","heading retired → title (DS-240)"],
   ["body","body-lg","body",""],
   ["body.md","body-md","body",""],
   ["body.sm","body-sm","body",""],
@@ -302,16 +303,16 @@ const MAP2 = [
   ["body.bold · body.md.bold","body-* + weight=bold","body","weight → prop"],
   ["body.hyperlink · body.md.hyperlink","body-* + link","body","link → styling, not a token"],
   ["label","label-lg","label",""],
-  ["button","label-lg (Title Case)","label","open: own family vs label size"],
+  ["button","label-lg (Title Case)","label","open: own family vs label-lg (DS-240); Title Case (DS-241)"],
   ["button.sm","label-md","label",""],
   ["label.sm.bold","label-sm + weight=bold","label","small / badge label"],
   ["label.sm.hyperlink","label-sm + link","label",""],
   ["label.sm (disclaimer)","label-sm","label","fine print — stays label-sm (caption rotation dropped)"],
   ["caption (deprecated)","body-xs","body","→ body-xs in P1; caption family removed"],
-  ["overline","body-xs + uppercase","body","open: caption family removed; case → prop"],
-  ["number · number.bold","body + mono feature","body","open: caption family removed; numbers = mono feature"],
-  ["title.number · hero.*.number","title-* + mono feature","title","numbers as a feature"],
-  ["hero.lg.italic · hero.md.italic","hero-lg / hero-md (upright)","title","Cooper italics dropped — italic removed (DS-236)"]
+  ["overline","open (DS-238)","—","UPPER retained; caption family removed → P2 home open"],
+  ["number · number.bold","body + mono feature","body","open (DS-238); numbers = mono feature"],
+  ["title.number · hero.*.number","title-* / hero-* + mono feature","title / hero","numbers = mono feature (DS-238)"],
+  ["hero.lg.italic · hero.md.italic","hero-lg / hero-md (upright)","hero","Cooper italics dropped — italic removed (DS-236)"]
 ];
 /* ==DATA END== */
 
@@ -414,16 +415,17 @@ function renderRemap(){
 }
 
 function renderTax(){
-  let h=`<h2>Phase 2 — proposed taxonomy (the 80/20)</h2>
+  let h=`<h2>Phase 2 — taxonomy (LOCKED 2026-06-30 · DS-240)</h2>
    <p class="note"><b>Token = family + size only.</b> Weight, italic and hyperlink become props/derived — not name
-   suffixes — collapsing ~34 styles → ~16 tokens, on one shared size scale (lg→xs).</p>
+   suffixes — collapsing ~34 styles → ~16 tokens. Size is <b>family-relative</b> (body-lg 16 · title-lg 22 · hero-lg 40 — no global "lg" px).
+   <b>hero</b> is its own family; <b>heading</b> is retired (folds into title).</p>
    <div class="famrow">`;
   for(const [fam,font,sizes] of TAX){
     h+=`<div class="fam"><b>${fam}</b> · ${font}<div class="sizes">${sizes.map(s=>`<span class="pill">${s}</span>`).join("")}</div></div>`;
   }
   h+=`</div>
    <h3>Before → after</h3>
-   <p class="note" style="color:var(--ink3)">Size steps anchored to current px; confirm the exact scale in Phase 2.</p>
+   <p class="note" style="color:var(--ink3)">Name mapping locked (DS-240). Open sub-questions: overline / number.* home + hero-sm treatment (DS-238).</p>
    <table><thead><tr><th>Today</th><th></th><th>Phase 2</th><th>family</th><th>note</th></tr></thead><tbody>`;
   for(const [today,to,fam,note] of MAP2){
     h+=`<tr><td><span class="tok">${today}</span></td><td class="arw">→</td><td><span class="tok">${to}</span></td><td>${fam}</td><td>${note||""}</td></tr>`;
@@ -432,7 +434,7 @@ function renderTax(){
    <div class="callout"><b>Axes become props:</b> weight = regular / medium / bold · italic = boolean ·
    link = styling/color (not a token) · numbers = mono feature/variant (not a parallel number.* family).
    So <code>body.md.bold</code> → <code>body-md</code> + <code>weight="bold"</code>.</div>
-   <p class="note" style="color:var(--ink3)">Phase 2 is a proposal — not executed in Phase 1.</p>`;
+   <p class="note" style="color:var(--ink3)">Decisions locked (DS-240); execution deferred to one coordinated Figma+code+audit cutover after Phase 1.</p>`;
   $("#tab-tax").innerHTML=h;
 }
 
