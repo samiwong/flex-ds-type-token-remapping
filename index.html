@@ -36,6 +36,8 @@
   h1{margin:0 0 4px;font-size:20px;letter-spacing:-.01em}
   .sub{color:var(--ink2);font-size:13px;max-width:940px;line-height:1.5}
   .banner{margin-top:12px;display:inline-flex;gap:8px;align-items:center;background:#f3edff;border:1px solid #e0d3fb;color:#5b34bf;padding:7px 12px;border-radius:8px;font-size:12.5px}
+  .conv{margin:12px 0 0;background:#f4f5f7;border:1px solid #e4e5e7;color:#333;padding:9px 13px;border-radius:8px;font-size:12.5px;max-width:960px;line-height:1.55}
+  .conv b{color:var(--ink)} .conv code{font-family:var(--mono);font-size:11.5px;background:#e9eaec;padding:1px 4px;border-radius:4px}
   nav{display:flex;gap:4px;padding:12px 32px 0;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:4;flex-wrap:wrap}
   nav button{background:none;color:var(--ink2);font:inherit;font-size:13.5px;font-weight:600;padding:9px 16px;border:1px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;cursor:pointer}
   nav button:hover{color:var(--ink)}
@@ -104,6 +106,8 @@
 <body>
 <header>
   <h1>Type Token Remap — Audit</h1>
+  <p class="conv"><b>Casing convention (DS-241):</b> headers &amp; buttons use <b>Title Case when ≤4 words</b>, sentence case beyond. Applies to <code>hero-*</code>, <code>title-*</code>, <code>label-*</code>, <code>button</code>; <code>overline</code> stays UPPER (exempt); <code>body-*</code> / <code>number.*</code> out of scope (<code>caption</code> deprecated). Enforced by an i18n-aware casing script — minor words, acronyms, proper nouns, per-locale rules.</p>
+  <div class="banner" style="background:#f2f4f7;border-color:#e0e3ea;color:#41485a">Viewing: <b>Current (P1) audit</b> · <a href="taxonomy.html" style="color:inherit;font-weight:600">Taxonomy update (family + size) →</a></div>
 </header>
 <nav id="nav"></nav>
 <main>
