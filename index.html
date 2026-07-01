@@ -51,6 +51,8 @@
   .f-val{background:#fbf0d6;color:#946100} .f-new{background:#e1f4e8;color:#1f7a45}
   .f-gone{background:#fbe4ee;color:#b03070} /* deprecate — pink */
   .f-only{background:#e7e9f7;color:#454bb3} /* genoa-only — indigo, distinct from deprecate */
+  .f-frac{background:#fdeee0;color:#b5541f} /* fractional-px line-height */
+  .lh-bad{color:#b03070;font-weight:700} .lh-frac{color:#b5541f;font-weight:700} .lh-ok{color:var(--ink)}
   /* specimen grid */
   .row{display:grid;grid-template-columns:250px 1fr 1fr 1fr;gap:0;border-bottom:1px solid var(--line)}
   .row.dep{opacity:.72}
@@ -116,6 +118,7 @@
     <div id="specimens"></div>
   </section>
   <section class="tab" id="tab-side"></section>
+  <section class="tab" id="tab-lh"></section>
   <section class="tab" id="tab-remap"></section>
   <section class="tab" id="tab-tax"></section>
   <section class="tab" id="tab-gt"></section>
@@ -460,12 +463,59 @@ function renderGT(){
    <b>genoa has no GT Standard today</b> — adding the family + native font registration is net-new code work, gated on the license.</p>`;
 }
 
-const TABS=[["specimens","Specimens"],["side","Side-by-side"],["remap","Phase 1 remap"],["tax","Phase 2 taxonomy"],["gt","GT Standard"]];
+function renderLH(){
+  const rat=(o)=> o? +(o.lh/o.s).toFixed(3) : null;
+  const isFrac=(o)=> o? !Number.isInteger(o.lh) : false;
+  const gcell=(G,D)=>{
+    if(!G) return '<span class="dash">—</span>';
+    const div = D && G.lh!==D.lh;
+    const cls = div?'lh-bad':isFrac(G)?'lh-frac':'lh-ok';
+    return `<span class="${cls}">${G.lh}</span> <span class="val">(${rat(G)})</span>`;
+  };
+  let h=`<h2>Line-height audit</h2>
+   <p class="note">Line height across the three sources — <b>genoa</b> (code) · <b>Dark Matter</b> (new Figma) · <b>UV</b> (original Figma) —
+   with genoa's <span class="mono">lh ÷ font-size</span> ratio. Figma stores whole px; genoa computes several inline as
+   <span class="mono">size × 1.35</span>, producing fractional px. <b>Dark Matter and UV agree almost everywhere, so code is the outlier.</b>
+   <span class="lh-bad">Pink</span> = genoa ≠ Figma · <span class="lh-frac">orange</span> = fractional px.</p>
+   <div class="conv" style="max-width:980px">
+     <b>Give these another look:</b>
+     <ol style="margin:6px 0 0;padding-left:20px;line-height:1.7">
+       <li><b>hero-lg-number</b> — genoa <b>42</b> vs Figma <b>56</b> (14px gap). genoa ratio 1.05 will clip; Figma is 1.40. Pick one.</li>
+       <li><b>16px label / number / input cluster</b> — genoa <b>21.6</b> vs Figma <b>24</b> (2.4px). Code under-leads the densest UI tokens — Figma sets 22 for running text but 24 for labels/numbers/inputs.</li>
+       <li><b>Fractional px in code</b> — 21.6 / 16.2 / 13.5 from <span class="mono">size × 1.35</span>. Snap to whole px to match Figma.</li>
+       <li><b>Within-code contradictions</b> — 16px: <code>body</code> 21.6 vs <code>body.bold</code> 22 · 14px: <code>body.md</code> 18 vs <code>button.sm</code> 19.</li>
+       <li><b>Scale-shape (DM + UV agree — design calls):</b> odd px (hero-md 37, all 14px = 19); headings looser than body (title 1.545 / section 1.556 vs body 1.375); <code>title.number</code> size 20→18.</li>
+     </ol>
+   </div>
+   <table><thead><tr><th>Concept</th><th>size</th><th>genoa lh (ratio)</th><th>Dark Matter lh</th><th>UV lh</th><th>flags</th></tr></thead><tbody>`;
+  for(const [label,uv,dm,gn,flags] of ORDER){
+    const G=byName(GENOA,gn),D=byName(DM,dm),U=byName(UV,uv);
+    if(!G&&!D&&!U) continue; // e.g. body-xs-hyperlink — new token, no captured values yet
+    const size=(G||D||U).s;
+    const badges=[];
+    if(G&&D&&G.lh!==D.lh) badges.push('<span class="flag f-val">code ≠ Figma</span>');
+    if(isFrac(G)) badges.push('<span class="flag f-frac">fractional</span>');
+    h+=`<tr class="${isDep(flags)?'dep':''}">
+      <td><span class="tok">${label}</span></td>
+      <td class="val">${size}</td>
+      <td>${gcell(G,D)}</td>
+      <td class="val">${D?D.lh:'<span class="dash">—</span>'}</td>
+      <td class="val">${U?U.lh:'<span class="dash">—</span>'}</td>
+      <td><div class="flags">${badges.join("")}</div></td>
+    </tr>`;
+  }
+  h+=`</tbody></table>
+   <p class="src">Values from the canonical DATA block (captured 2026-06-25 via Figma <span class="mono">getLocalTextStylesAsync()</span> + genoa source).
+   Ratio = line-height ÷ font-size (genoa font size). Dark Matter/UV sizes match genoa except <code>title-number</code> (18 vs 20) and the italic deprecations.</p>`;
+  $("#tab-lh").innerHTML=h;
+}
+
+const TABS=[["specimens","Specimens"],["side","Side-by-side"],["lh","Line height"],["remap","Phase 1 remap"],["tax","Phase 2 taxonomy"],["gt","GT Standard"]];
 $("#nav").innerHTML=TABS.map(([id,t],i)=>`<button data-t="${id}" class="${i===0?'on':''}">${t}</button>`).join("");
 $("#nav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
   document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.id==="tab-"+b.dataset.t));});
-renderSpecimens();renderSide();renderRemap();renderTax();renderGT();
+renderSpecimens();renderSide();renderLH();renderRemap();renderTax();renderGT();
 </script>
 </body>
 </html>
